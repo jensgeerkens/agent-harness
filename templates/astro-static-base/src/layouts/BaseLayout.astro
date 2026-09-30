@@ -1,0 +1,102 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { company, contact, openingHours } from '../content/site';
+
+interface Props {
+  title?: string;
+  description?: string;
+  /** Pfad ohne führenden Slash, z.B. "leistungen". Leer = Startseite. */
+  path?: string;
+  ogType?: string;
+}
+
+const {
+  title,
+  description = `${company.legalName} ${company.region}: ${company.tagline}`,
+  path = '',
+  ogType = 'website',
+} = Astro.props;
+
+const fullTitle = title
+  ? `${title} · ${company.legalName}`
+  : `${company.legalName} · ${contact.city}`;
+
+const canonical = new URL(path, Astro.site).href;
+
+const dayMap: Record<string, string> = {
+  Montag: 'Monday', Dienstag: 'Tuesday', Mittwoch: 'Wednesday', Donnerstag: 'Thursday',
+  Freitag: 'Friday', Samstag: 'Saturday', Sonntag: 'Sunday',
+};
+
+const openingSpec = openingHours
+  .filter((d) => d.open && d.close)
+  .map((d) => ({
+    '@type': 'OpeningHoursSpecification',
+    dayOfWeek: `https://schema.org/${dayMap[d.day]}`,
+    opens: d.open,
+    closes: d.close,
+  }));
+
+// JSON-LD: LocalBusiness (Subtyp pro Projekt anpassen, z.B. Bakery/AutoRepair)
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'LocalBusiness',
+  '@id': `${Astro.site}#business`,
+  name: company.legalName,
+  slogan: company.tagline,
+  url: Astro.site?.href,
+  telephone: contact.phone.link.replace('tel:', ''),
+  email: contact.email.main,
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: contact.street,
+    postalCode: contact.zip,
+    addressLocality: contact.city,
+    addressCountry: 'DE',
+  },
+  geo: { '@type': 'GeoCoordinates', latitude: contact.geo.lat, longitude: contact.geo.lng },
+  openingHoursSpecification: openingSpec,
+};
+---
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta name="theme-color" content="#0b1220" />
+    <meta name="robots" content="index, follow" />
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/favicon.svg" />
+
+    <meta property="og:type" content={ogType} />
+    <meta property="og:site_name" content={company.legalName} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content="de_DE" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} is:inline />
+  </head>
+  <body>
+    <a
+      href="#main"
+      class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-ink-900 focus:px-4 focus:py-2 focus:text-white"
+    >
+      Zum Inhalt springen
+    </a>
+    <Header />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

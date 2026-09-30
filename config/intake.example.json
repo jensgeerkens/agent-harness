@@ -1,0 +1,11 @@
+{
+  "_comment": "Vorlage fuer den Intake-Fragebogen (/freigabe). Nach config/intake.json kopieren (gitignored) und Werte setzen.",
+  "formspree_id": "REPLACE_WITH_FORMSPREE_ID",
+  "notify_email": "kontakt@example.org",
+  "analytics": "none",
+  "brand": {
+    "name": "Beispiel-Studio",
+    "accent": "#5eead4"
+  },
+  "privacy_note": "Ihre Angaben werden ausschliesslich zur Erstellung Ihrer Website verwendet und per verschluesselter Verbindung an den Betreiber dieses Formulars uebermittelt. Keine Weitergabe an Dritte."
+}

@@ -1,0 +1,27 @@
+# Der Harness selbst hält keine Projekt-Artefakte.
+# Zielprojekte leben unter ~/projects/<name>/ (eigene Repos).
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+npm-debug.log*
+*.log
+
+# Editor
+.idea/
+.vscode/
+
+# Node (falls scripts mal lokal getestet werden)
+node_modules/
+
+# Harness-state (Trajectory-Logs und INDEX.tsv aus dem Stop-Hook, Laufzeitdaten)
+.harness-state/
+
+# Lokale Konfiguration mit echter Formspree-ID und Mail-Adresse (Vorlage: config/intake.example.json)
+config/intake.json
+
+# Temporäre Test-Ausgaben
+.tmp/
+.playwright/

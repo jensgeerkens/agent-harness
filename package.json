@@ -1,0 +1,21 @@
+{
+  "name": "agent-harness",
+  "version": "0.3.0",
+  "private": true,
+  "description": "Multi-Agent-Harness für Claude Code: baut statische Websites in einem Loop aus Research, Code, Validierung und Bewertung, bis ein gewichteter Score von 9.0 erreicht ist.",
+  "license": "MIT",
+  "type": "commonjs",
+  "scripts": {
+    "test": "npm run test:unit && npm run test:hooks",
+    "test:unit": "node --test scripts/test-make-intake.mjs scripts/test-score-aggregator.mjs",
+    "test:hooks": "bash scripts/test-hooks.sh",
+    "test:intake-renderer": "node scripts/make-intake.mjs examples/question-set.example.json .tmp/intake-test.html --config config/intake.example.json --formspree testform && node scripts/test-intake-renderer.mjs examples/question-set.example.json .tmp/intake-test.html"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.12.1",
+    "playwright": "^1.61.1"
+  }
+}

@@ -1,0 +1,465 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>__PAGE_TITLE__</title>
+  <style>
+    :root {
+      --accent: __ACCENT__;
+      --bg: #0d1117; --panel: #161b22; --line: #283041;
+      --text: #e8edf4; --muted: #9aa6b8; --err: #f87171; --ok: #5eead4;
+      --radius: 14px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; background: var(--bg); color: var(--text);
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.6; -webkit-font-smoothing: antialiased;
+    }
+    .wrap { max-width: 760px; margin: 0 auto; padding: 32px 20px 80px; }
+    header.intro { padding: 16px 0 28px; border-bottom: 1px solid var(--line); margin-bottom: 28px; }
+    h1 { font-size: clamp(1.5rem, 4vw, 2rem); margin: 0 0 10px; letter-spacing: -0.02em; }
+    .intro p { color: var(--muted); margin: 0; max-width: 60ch; }
+    fieldset { border: 1px solid var(--line); border-radius: var(--radius); background: var(--panel);
+      padding: 22px; margin: 0 0 22px; }
+    legend { padding: 0 10px; font-weight: 700; font-size: 1.05rem; }
+    .sec-help { color: var(--muted); font-size: .9rem; margin: 0 0 14px; }
+    .q { margin: 0 0 20px; }
+    .q:last-child { margin-bottom: 4px; }
+    label.qlabel { display: block; font-weight: 600; margin-bottom: 4px; }
+    .req { color: var(--accent); margin-left: 4px; }
+    .help { color: var(--muted); font-size: .85rem; margin: 0 0 8px; }
+    input[type=text], input[type=email], input[type=tel], textarea, select {
+      width: 100%; background: #0d121b; color: var(--text); border: 1px solid var(--line);
+      border-radius: 10px; padding: 11px 13px; font: inherit; outline: none;
+    }
+    input:focus, textarea:focus, select:focus { border-color: var(--accent); }
+    textarea { min-height: 96px; resize: vertical; }
+    .opts { display: grid; gap: 8px; }
+    .opt { display: flex; align-items: flex-start; gap: 10px; background: #0d121b;
+      border: 1px solid var(--line); border-radius: 10px; padding: 10px 13px; cursor: pointer; }
+    .opt:hover { border-color: var(--accent); }
+    .opt input { margin-top: 4px; accent-color: var(--accent); }
+    .consent { display: flex; gap: 10px; align-items: flex-start; margin: 8px 0 20px; }
+    .consent input { margin-top: 5px; accent-color: var(--accent); width: 18px; height: 18px; }
+    .consent label { color: var(--muted); font-size: .9rem; }
+    .field-err { color: var(--err); font-size: .82rem; margin-top: 5px; display: none; }
+    .q.invalid .field-err { display: block; }
+    .q.invalid input, .q.invalid textarea, .q.invalid select { border-color: var(--err); }
+    /* Freitext-Zusatz je Frage ("passt nichts davon?") */
+    .note { margin-top: 9px; }
+    .note summary { display: inline-flex; align-items: center; gap: 7px; color: var(--muted);
+      font-size: .84rem; cursor: pointer; list-style: none; padding: 3px 0; }
+    .note summary::-webkit-details-marker { display: none; }
+    .note summary::before { content: '+'; display: inline-grid; place-items: center;
+      width: 18px; height: 18px; border: 1px solid var(--line); border-radius: 6px; font-size: .9rem; line-height: 1; }
+    .note[open] summary::before { content: '–'; border-color: var(--accent); color: var(--accent); }
+    .note summary:hover { color: var(--text); }
+    .note textarea { margin-top: 7px; min-height: 68px; }
+    /* Fortschritt */
+    .progress { position: sticky; top: 0; z-index: 5; background: rgba(13,17,23,.94);
+      backdrop-filter: blur(6px); border-bottom: 1px solid var(--line); padding: 10px 0 9px; margin-bottom: 4px; }
+    .progress .bar { height: 6px; background: #0d121b; border: 1px solid var(--line);
+      border-radius: 999px; overflow: hidden; }
+    .progress .bar span { display: block; height: 100%; width: 0; background: var(--accent);
+      transition: width .25s ease; }
+    .progress .txt { color: var(--muted); font-size: .8rem; margin-top: 6px; display: flex;
+      justify-content: space-between; gap: 12px; }
+    .saved { color: var(--ok); }
+    .draft-hint { background: #0d121b; border: 1px solid var(--line); border-left: 3px solid var(--accent);
+      border-radius: 10px; padding: 11px 14px; margin: 0 0 20px; font-size: .88rem; color: var(--muted); }
+    .draft-hint button { background: none; border: 0; color: var(--accent); cursor: pointer;
+      font: inherit; text-decoration: underline; padding: 0; }
+    @media print {
+      body { background: #fff; color: #111; }
+      .progress, button.submit, .draft-hint { display: none !important; }
+      fieldset { break-inside: avoid; border-color: #bbb; background: #fff; }
+      .opt, input, textarea, select { background: #fff !important; border-color: #bbb !important; color: #111 !important; }
+      .note { display: block; }
+      .note[open] summary, .note summary { color: #555; }
+      .help, .sec-help, .intro p { color: #555; }
+    }
+    button.submit {
+      background: var(--accent); color: #06241f; font-weight: 700; border: 0;
+      padding: 14px 26px; border-radius: 999px; font-size: 1rem; cursor: pointer;
+    }
+    button.submit:disabled { opacity: .5; cursor: not-allowed; }
+    .status { margin-top: 16px; font-size: .95rem; }
+    .status.err { color: var(--err); }
+    .done { text-align: center; padding: 60px 20px; }
+    .done h2 { font-size: 1.6rem; }
+    .done .backup-note { color: var(--muted); font-size: .9rem; max-width: 46ch;
+      margin: 18px auto 20px; text-align: left; background: #0d121b; border: 1px solid var(--line);
+      border-left: 3px solid var(--accent); border-radius: 10px; padding: 12px 14px; }
+    .done .check { font-size: 3rem; color: var(--ok); }
+    footer.legal { color: var(--muted); font-size: .8rem; margin-top: 36px; border-top: 1px solid var(--line); padding-top: 16px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div id="app"><!-- renderer fuellt das --></div>
+  </div>
+
+  <script>
+    // Pro Projekt von make-intake.mjs eingegossenes Frage-Set (zentraler Renderer, eine Quelle):
+    const QUESTION_SET = /*__QUESTION_SET__*/ null;
+    const FORMSPREE_ID = "__FORMSPREE_ID__";
+    const PRIVACY_NOTE = "__PRIVACY_NOTE__";
+    const CONTACT_EMAIL = "__CONTACT_EMAIL__";
+
+    const app = document.getElementById('app');
+
+    function el(tag, attrs = {}, children = []) {
+      const e = document.createElement(tag);
+      for (const [k, v] of Object.entries(attrs)) {
+        if (k === 'class') e.className = v;
+        else if (k === 'html') e.innerHTML = v;
+        else if (k === 'text') e.textContent = v;
+        else e.setAttribute(k, v);
+      }
+      for (const c of [].concat(children)) if (c) e.appendChild(c);
+      return e;
+    }
+
+    function renderForm() {
+      const set = QUESTION_SET;
+      app.innerHTML = '';
+
+      // Fortschrittsleiste (klebt oben)
+      const prog = el('div', { class: 'progress', id: 'progress' });
+      const bar = el('div', { class: 'bar' });
+      bar.appendChild(el('span', { id: 'progBar' }));
+      prog.appendChild(bar);
+      const txt = el('div', { class: 'txt' });
+      txt.appendChild(el('span', { id: 'progTxt', text: '' }));
+      txt.appendChild(el('span', { class: 'saved', id: 'savedTxt', text: '' }));
+      prog.appendChild(txt);
+      app.appendChild(prog);
+
+      const header = el('header', { class: 'intro' });
+      header.appendChild(el('h1', { text: set.title || 'Website-Fragebogen' }));
+      if (set.intro) header.appendChild(el('p', { text: set.intro }));
+      app.appendChild(header);
+
+      const form = el('form', { id: 'intakeForm', novalidate: 'true' });
+
+      // verstecktes Feld: Projekt-Slug + Betreff fuer die Mail
+      form.appendChild(el('input', { type: 'hidden', name: '_project', value: set.project || '' }));
+      form.appendChild(el('input', { type: 'hidden', name: '_subject',
+        value: set.subject || ('Neuer Website-Fragebogen: ' + (set.project || set.title || '')) }));
+
+      for (const sec of set.sections) {
+        const fs = el('fieldset');
+        fs.appendChild(el('legend', { text: sec.title }));
+        if (sec.help) fs.appendChild(el('p', { class: 'sec-help', text: sec.help }));
+        for (const q of (sec.questions || [])) fs.appendChild(renderQuestion(sec, q));
+        form.appendChild(fs);
+      }
+
+      // DSGVO-Consent
+      const consent = el('div', { class: 'consent' });
+      const cb = el('input', { type: 'checkbox', id: 'consent', required: 'true' });
+      consent.appendChild(cb);
+      consent.appendChild(el('label', { for: 'consent', text: PRIVACY_NOTE + ' Mit dem Absenden stimme ich der Verarbeitung dieser Angaben zu diesem Zweck zu.' }));
+      form.appendChild(consent);
+
+      const btn = el('button', { class: 'submit', type: 'submit', text: 'Antworten absenden' });
+      form.appendChild(btn);
+      form.appendChild(el('div', { class: 'status', id: 'status' }));
+
+      form.addEventListener('submit', onSubmit);
+      app.appendChild(form);
+      app.appendChild(el('footer', { class: 'legal',
+        text: 'Verarbeitung der Daten: ' + CONTACT_EMAIL + '. ' + "__TRACKING_NOTE__" + ' '
+            + 'Zwischenstaende werden nur lokal in diesem Browser gespeichert.' }));
+
+      restoreDraft(form);
+      let saveTimer = null;
+      const onChange = () => {
+        updateProgress(form);
+        clearTimeout(saveTimer);
+        saveTimer = setTimeout(() => saveDraft(form), 400);
+      };
+      form.addEventListener('input', onChange);
+      form.addEventListener('change', onChange);
+      updateProgress(form);
+    }
+
+    /* ---- Entwurf lokal sichern (kein Server, nur dieser Browser) ---- */
+    function draftKey() { return 'intake-draft-' + (QUESTION_SET.project || 'projekt'); }
+    let draftSent = false; // bleibt true, auch wenn der verzoegerte Autosave danach noch feuert
+
+    function collect(form) {
+      const data = {};
+      for (const inp of form.querySelectorAll('input, textarea, select')) {
+        if (!inp.name || inp.type === 'hidden') continue;
+        if (inp.type === 'checkbox' || inp.type === 'radio') {
+          if (inp.checked) (data[inp.name] = data[inp.name] || []).push(inp.value);
+        } else if (inp.value.trim()) {
+          data[inp.name] = inp.value;
+        }
+      }
+      return data;
+    }
+
+    function saveDraft(form) {
+      try {
+        localStorage.setItem(draftKey(), JSON.stringify({ t: Date.now(), sent: draftSent, d: collect(form) }));
+        const s = document.getElementById('savedTxt');
+        if (s) { s.textContent = 'Zwischengespeichert'; clearTimeout(saveDraft._t);
+          saveDraft._t = setTimeout(() => { s.textContent = ''; }, 2200); }
+      } catch (e) { /* privater Modus o. ae., dann eben ohne Speichern */ }
+    }
+
+    function clearDraft() { try { localStorage.removeItem(draftKey()); } catch (e) {} }
+
+    function restoreDraft(form) {
+      let raw = null;
+      try { raw = localStorage.getItem(draftKey()); } catch (e) { return; }
+      if (!raw) return;
+      let saved;
+      try { saved = JSON.parse(raw); } catch (e) { return; }
+      const data = (saved && saved.d) || {};
+      draftSent = !!(saved && saved.sent);
+      if (!Object.keys(data).length) return;
+
+      for (const [name, val] of Object.entries(data)) {
+        const fields = form.querySelectorAll('[name="' + name + '"]');
+        if (!fields.length) continue;
+        for (const f of fields) {
+          if (f.type === 'checkbox' || f.type === 'radio') {
+            if (Array.isArray(val) && val.includes(f.value)) f.checked = true;
+          } else {
+            f.value = Array.isArray(val) ? val[0] : val;
+            if (f.value && f.closest('details.note')) f.closest('details.note').open = true;
+          }
+        }
+      }
+
+      const when = saved.t ? new Date(saved.t).toLocaleString('de-DE', { dateStyle: 'short', timeStyle: 'short' }) : '';
+      const hint = el('div', { class: 'draft-hint' });
+      hint.appendChild(el('span', { text: saved.sent
+        ? 'Diesen Fragebogen hast du bereits abgeschickt' + (when ? ' (am ' + when + ')' : '')
+          + '. Deine Antworten stehen weiterhin hier: Du kannst sie ergaenzen und noch einmal senden. '
+        : 'Deine bisherigen Antworten wurden wiederhergestellt'
+          + (when ? ' (zuletzt bearbeitet am ' + when + ').' : '.') + ' ' }));
+      const reset = el('button', { type: 'button', text: 'Alles neu ausfuellen' });
+      reset.addEventListener('click', () => {
+        if (!confirm('Wirklich alle bisherigen Antworten loeschen?')) return;
+        clearDraft(); location.reload();
+      });
+      hint.appendChild(reset);
+      form.insertBefore(hint, form.firstChild);
+    }
+
+    function updateProgress(form) {
+      const qs = [...form.querySelectorAll('.q')];
+      let done = 0;
+      for (const q of qs) {
+        const name = q.dataset.name;
+        const inputs = q.querySelectorAll('[name="' + name + '"], [name="' + name + '[]"]');
+        for (const i of inputs) {
+          if ((i.type === 'radio' || i.type === 'checkbox') ? i.checked : i.value.trim()) { done++; break; }
+        }
+      }
+      const pct = qs.length ? Math.round((done / qs.length) * 100) : 0;
+      const bar = document.getElementById('progBar');
+      const txt = document.getElementById('progTxt');
+      if (bar) bar.style.width = pct + '%';
+      if (txt) txt.textContent = done + ' von ' + qs.length + ' Fragen beantwortet (' + pct + ' %)';
+    }
+
+    function fieldName(sec, q) { return sec.id + '__' + q.id; }
+
+    function renderQuestion(sec, q) {
+      const wrap = el('div', { class: 'q', 'data-name': fieldName(sec, q), 'data-required': q.required ? '1' : '0' });
+      const lbl = el('label', { class: 'qlabel', text: q.label });
+      if (q.required) lbl.appendChild(el('span', { class: 'req', text: '*' }));
+      wrap.appendChild(lbl);
+      if (q.help) wrap.appendChild(el('p', { class: 'help', text: q.help }));
+
+      const name = fieldName(sec, q);
+      const t = q.type || 'text';
+      if (t === 'textarea') {
+        wrap.appendChild(el('textarea', { name, placeholder: q.placeholder || '' }));
+      } else if (t === 'select') {
+        const sel = el('select', { name });
+        sel.appendChild(el('option', { value: '', text: q.placeholder || 'Bitte waehlen…' }));
+        for (const o of (q.options || [])) sel.appendChild(el('option', { value: o, text: o }));
+        wrap.appendChild(sel);
+      } else if (t === 'radio' || t === 'checkbox') {
+        const opts = el('div', { class: 'opts' });
+        for (const o of (q.options || [])) {
+          const row = el('label', { class: 'opt' });
+          row.appendChild(el('input', { type: t, name: t === 'checkbox' ? name + '[]' : name, value: o }));
+          row.appendChild(el('span', { text: o }));
+          opts.appendChild(row);
+        }
+        wrap.appendChild(opts);
+      } else {
+        wrap.appendChild(el('input', { type: ['email', 'tel'].includes(t) ? t : 'text', name, placeholder: q.placeholder || '' }));
+      }
+      wrap.appendChild(el('div', { class: 'field-err', text: 'Bitte ausfuellen.' }));
+
+      // Freitext-Zusatz: bei Auswahlfragen standardmaessig an, per "note": false abschaltbar,
+      // bei Text-/Textarea-Fragen nur wenn "note": true gesetzt ist.
+      const choice = ['radio', 'checkbox', 'select'].includes(t);
+      const wantsNote = q.note === undefined ? choice : !!q.note;
+      if (wantsNote) {
+        const det = el('details', { class: 'note' });
+        det.appendChild(el('summary', { text: q.noteLabel || 'Passt nichts genau? In eigenen Worten ergaenzen' }));
+        det.appendChild(el('textarea', {
+          name: name + '__freitext',
+          placeholder: 'Optional: deine eigene Antwort oder Ergaenzung',
+        }));
+        wrap.appendChild(det);
+      }
+      return wrap;
+    }
+
+    function validate(form) {
+      let ok = true;
+      for (const q of form.querySelectorAll('.q')) {
+        if (q.dataset.required !== '1') continue;
+        const name = q.dataset.name;
+        const inputs = q.querySelectorAll('[name="' + name + '"], [name="' + name + '[]"]');
+        let filled = false;
+        for (const i of inputs) {
+          if ((i.type === 'radio' || i.type === 'checkbox') ? i.checked : i.value.trim()) filled = true;
+        }
+        q.classList.toggle('invalid', !filled);
+        if (!filled) ok = false;
+      }
+      return ok;
+    }
+
+    // Formspree markiert manche Einsendungen (z. B. mit Geldbetraegen) als Spam, antwortet trotzdem
+    // "ok" und verschickt dann KEINE Mail. Deshalb geht nach jeder Einsendung eine zweite,
+    // inhaltsfreie Benachrichtigung raus, die den Filter sicher passiert. Sie enthaelt bewusst
+    // keine Antworten. Schlaegt sie fehl, bleibt die eigentliche Einsendung davon unberuehrt.
+    async function notifyArrival(form) {
+      try {
+        const subject = (form.querySelector('[name="_subject"]') || {}).value || '';
+        const fd = new FormData();
+        fd.append('_subject', 'Eingang: ' + subject);
+        fd.append('_project', (form.querySelector('[name="_project"]') || {}).value || '');
+        fd.append('zeit', new Date().toISOString()); // eindeutig machen: identische Bodies verwirft Formspree als Duplikat
+        fd.append('hinweis', 'Es ist gerade ein ausgefuellter Fragebogen eingegangen. Kam die Mail mit den Antworten nicht an, liegt die Einsendung im Formspree-Dashboard im Reiter Spam (dort ansehen und als kein Spam markieren).');
+        await fetch('https://formspree.io/f/' + FORMSPREE_ID, { method: 'POST', headers: { 'Accept': 'application/json' }, body: fd });
+      } catch (e) { /* bewusst still: die eigentliche Einsendung war erfolgreich */ }
+    }
+
+    async function onSubmit(e) {
+      e.preventDefault();
+      const form = e.target;
+      const status = document.getElementById('status');
+      status.className = 'status'; status.textContent = '';
+      if (!document.getElementById('consent').checked) {
+        status.className = 'status err'; status.textContent = 'Bitte der Verarbeitung zustimmen.'; return;
+      }
+      if (!validate(form)) {
+        status.className = 'status err'; status.textContent = 'Bitte die rot markierten Pflichtfelder ausfuellen.';
+        form.querySelector('.q.invalid')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+      const btn = form.querySelector('button.submit');
+      btn.disabled = true; btn.textContent = 'Wird gesendet…';
+
+      if (!FORMSPREE_ID || FORMSPREE_ID === 'REPLACE_WITH_FORMSPREE_ID') {
+        status.className = 'status err';
+        status.textContent = 'Formular ist noch nicht aktiviert (Formspree-ID fehlt). Bitte den Absender des Formulars informieren.';
+        btn.disabled = false; btn.textContent = 'Antworten absenden'; return;
+      }
+      try {
+        const res = await fetch('https://formspree.io/f/' + FORMSPREE_ID, {
+          method: 'POST', headers: { 'Accept': 'application/json' }, body: new FormData(form),
+        });
+        if (res.ok) {
+          const text = answersAsText(form);
+          await notifyArrival(form);
+          markDraftSent(form); // NICHT loeschen: faengt die still verschluckte Einsendung ab
+          renderDone(text);
+        }
+        else { throw new Error('HTTP ' + res.status); }
+      } catch (err) {
+        status.className = 'status err';
+        status.textContent = 'Senden fehlgeschlagen. Bitte spaeter erneut versuchen oder direkt an ' + CONTACT_EMAIL + ' schreiben.';
+        btn.disabled = false; btn.textContent = 'Antworten absenden';
+      }
+    }
+
+    /* Antworten als lesbarer Text: Sicherungskopie, falls der Spamfilter des
+       Formular-Anbieters die Einsendung still verschluckt. */
+    function answersAsText(form) {
+      const set = QUESTION_SET;
+      const out = [set.title || 'Fragebogen', 'Ausgefuellt am ' + new Date().toLocaleString('de-DE'), ''];
+      for (const sec of set.sections) {
+        const block = [];
+        for (const q of (sec.questions || [])) {
+          const name = sec.id + '__' + q.id;
+          const vals = [];
+          for (const i of form.querySelectorAll('[name="' + name + '"], [name="' + name + '[]"]')) {
+            if (i.type === 'radio' || i.type === 'checkbox') { if (i.checked) vals.push(i.value); }
+            else if (i.value.trim()) vals.push(i.value.trim());
+          }
+          const note = form.querySelector('[name="' + name + '__freitext"]');
+          const noteVal = note && note.value.trim();
+          if (!vals.length && !noteVal) continue;
+          block.push(q.label);
+          if (vals.length) block.push('  ' + vals.join('; '));
+          if (noteVal) block.push('  Ergaenzung: ' + noteVal);
+          block.push('');
+        }
+        if (block.length) out.push('== ' + sec.title + ' ==', '', ...block);
+      }
+      return out.join('\n');
+    }
+
+    function markDraftSent(form) {
+      draftSent = true;
+      try {
+        localStorage.setItem(draftKey(), JSON.stringify({ t: Date.now(), sent: true, d: collect(form) }));
+      } catch (e) {}
+    }
+
+    function renderDone(text) {
+      app.innerHTML = '';
+      const d = el('div', { class: 'done' });
+      d.appendChild(el('div', { class: 'check', text: '✓' }));
+      d.appendChild(el('h2', { text: 'Vielen Dank!' }));
+      const duzen = (QUESTION_SET.anrede || 'sie') === 'du';
+      d.appendChild(el('p', { text: duzen
+        ? 'Deine Antworten sind angekommen. Wir melden uns mit den naechsten Schritten.'
+        : 'Ihre Antworten sind angekommen. Wir melden uns mit den naechsten Schritten.' }));
+      if (text) {
+        d.appendChild(el('p', { class: 'backup-note',
+          text: duzen
+            ? 'Sicherheitshalber: Speicher dir die Antworten als Datei. Falls keine Rueckmeldung '
+              + 'kommt, schickst du diese Datei einfach an ' + CONTACT_EMAIL + ', statt alles noch einmal auszufuellen. '
+              + 'Deine Eingaben bleiben ausserdem in diesem Browser gespeichert.'
+            : 'Sicherheitshalber: Speichern Sie sich die Antworten als Datei. '
+              + 'Falls keine Rueckmeldung kommt, schicken Sie diese Datei einfach an ' + CONTACT_EMAIL + ', '
+              + 'statt alles noch einmal auszufuellen. Ihre Eingaben bleiben ausserdem in diesem '
+              + 'Browser gespeichert.' }));
+        const save = el('button', { class: 'submit', type: 'button',
+          text: duzen ? 'Antworten als Datei sichern' : 'Antworten als Datei sichern' });
+        save.addEventListener('click', () => {
+          const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+          const a = el('a', { href: URL.createObjectURL(blob),
+            download: (QUESTION_SET.project || 'fragebogen') + '-antworten.txt' });
+          document.body.appendChild(a); a.click(); a.remove();
+          setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+          save.textContent = 'Gespeichert ✓';
+        });
+        d.appendChild(save);
+      }
+      app.appendChild(d);
+    }
+
+    if (QUESTION_SET && Array.isArray(QUESTION_SET.sections)) renderForm();
+    else app.innerHTML = '<p style="color:#f87171">Kein Frage-Set geladen. (Renderer wurde nicht korrekt befuellt.)</p>';
+  </script>
+</body>
+</html>

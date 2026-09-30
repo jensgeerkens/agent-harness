@@ -1,0 +1,25 @@
+{
+  "name": "astro-static-base",
+  "type": "module",
+  "version": "0.1.0",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.7.2",
+    "@fontsource-variable/inter": "^5.2.8",
+    "@tailwindcss/vite": "4.3.0",
+    "astro": "6.3.6",
+    "tailwindcss": "4.3.0"
+  },
+  "devDependencies": {
+    "wrangler": "^4.93.0"
+  }
+}

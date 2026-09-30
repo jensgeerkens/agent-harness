@@ -1,0 +1,65 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { company, contact, legal } from '../content/site';
+
+const stand = new Date().toLocaleDateString('de-DE', { year: 'numeric', month: 'long' });
+---
+<BaseLayout title="Datenschutz" description="Datenschutzerklärung gemäß Art. 13 DSGVO." path="datenschutz">
+  <section class="container-page py-16 md:py-20">
+    <h1 class="text-4xl font-bold tracking-tight text-ink-900">Datenschutzerklärung</h1>
+    <div class="mt-8 max-w-2xl space-y-6 text-ink-700">
+      <p class="text-sm text-ink-500">Stand: {stand}</p>
+
+      <div>
+        <h2 class="text-lg font-semibold text-ink-900">1. Verantwortlicher</h2>
+        <p class="mt-2">
+          {company.legalName}, {legal.responsible}<br />
+          {contact.street}, {contact.zip} {contact.city}<br />
+          Telefon: {contact.phone.display} · E-Mail: {contact.email.main}
+        </p>
+      </div>
+
+      <div>
+        <h2 class="text-lg font-semibold text-ink-900">2. Keine Cookies, kein Tracking</h2>
+        <p class="mt-2">
+          Diese Webseite wird als statische Seite ausgeliefert. Wir setzen <strong>keine Cookies</strong>,
+          verwenden <strong>keine Analyse- oder Tracking-Tools</strong> und binden <strong>keine
+          externen Schriftarten, Karten oder Videos</strong> ein. Schriftarten werden lokal vom
+          eigenen Server geladen (self-hosted), es findet keine Datenübertragung an Dritte statt.
+        </p>
+      </div>
+
+      <div>
+        <h2 class="text-lg font-semibold text-ink-900">3. Server-Logfiles</h2>
+        <p class="mt-2">
+          Beim Aufruf der Seite verarbeitet der Hosting-Anbieter technisch notwendige Daten
+          (u. a. IP-Adresse, Datum/Uhrzeit, abgerufene Datei) zur Auslieferung und Sicherheit.
+          Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an einem sicheren,
+          stabilen Betrieb). Die Daten werden nur kurzzeitig gespeichert.
+        </p>
+      </div>
+
+      <div>
+        <h2 class="text-lg font-semibold text-ink-900">4. Kontaktaufnahme</h2>
+        <p class="mt-2">
+          Wenn Sie uns per Telefon oder E-Mail kontaktieren, verarbeiten wir Ihre Angaben zur
+          Bearbeitung der Anfrage (Art. 6 Abs. 1 lit. b bzw. lit. a DSGVO). Die Daten werden
+          gelöscht, sobald sie für den Zweck nicht mehr erforderlich sind.
+        </p>
+      </div>
+
+      <div>
+        <h2 class="text-lg font-semibold text-ink-900">5. Ihre Rechte</h2>
+        <p class="mt-2">
+          Sie haben das Recht auf Auskunft, Berichtigung, Löschung, Einschränkung der Verarbeitung,
+          Datenübertragbarkeit und Widerspruch (Art. 15–21 DSGVO). Zudem besteht ein Beschwerderecht
+          bei einer Datenschutz-Aufsichtsbehörde (Art. 77 DSGVO).
+        </p>
+      </div>
+
+      <p class="text-sm text-ink-500">
+        Hinweis: Vor Veröffentlichung durch Inhaber:in/Anwält:in prüfen lassen.
+      </p>
+    </div>
+  </section>
+</BaseLayout>

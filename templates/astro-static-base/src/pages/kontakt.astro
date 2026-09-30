@@ -1,0 +1,59 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Icon from '../components/Icon.astro';
+import StatusBadge from '../components/StatusBadge.astro';
+import { contact, openingHours } from '../content/site';
+---
+<BaseLayout
+  title="Kontakt"
+  description="So erreichen Sie uns, Adresse, Telefon, E-Mail und Öffnungszeiten."
+  path="kontakt"
+>
+  <section class="container-page py-16 md:py-20">
+    <span class="eyebrow">Kontakt</span>
+    <h1 class="mt-3 text-4xl font-bold tracking-tight text-ink-900 sm:text-5xl">So erreichen Sie uns</h1>
+
+    <div class="mt-10 grid gap-8 lg:grid-cols-2">
+      <div class="space-y-5">
+        <div class="flex items-start gap-3">
+          <Icon name="map-pin" size={22} class="mt-1 shrink-0 text-accent-600" />
+          <div>
+            <h2 class="font-semibold text-ink-900">Adresse</h2>
+            <p class="text-ink-600">{contact.street}<br />{contact.zip} {contact.city}</p>
+          </div>
+        </div>
+        <div class="flex items-start gap-3">
+          <Icon name="phone" size={22} class="mt-1 shrink-0 text-accent-600" />
+          <div>
+            <h2 class="font-semibold text-ink-900">Telefon</h2>
+            <a href={contact.phone.link} class="text-accent-600 hover:text-accent-700">{contact.phone.display}</a>
+          </div>
+        </div>
+        <div class="flex items-start gap-3">
+          <Icon name="mail" size={22} class="mt-1 shrink-0 text-accent-600" />
+          <div>
+            <h2 class="font-semibold text-ink-900">E-Mail</h2>
+            <a href={`mailto:${contact.email.info}`} class="text-accent-600 hover:text-accent-700">{contact.email.info}</a>
+          </div>
+        </div>
+        <StatusBadge />
+      </div>
+
+      <div class="rounded-card border border-hair bg-white p-6">
+        <h2 class="flex items-center gap-2 font-semibold text-ink-900">
+          <Icon name="clock" size={20} class="text-accent-600" /> Öffnungszeiten
+        </h2>
+        <ul class="mt-4 space-y-2 text-sm">
+          {openingHours.map((d) => (
+            <li class="flex justify-between gap-4 border-b border-hair pb-2 last:border-0">
+              <span class="text-ink-500">{d.day}</span>
+              <span class={d.open ? 'font-medium text-ink-900' : 'text-ink-400'}>
+                {d.open ? `${d.open}–${d.close}${d.pause ? ' · Pause ' + d.pause : ''}` : 'geschlossen'}
+              </span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

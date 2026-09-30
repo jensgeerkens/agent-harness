@@ -1,0 +1,55 @@
+---
+import { getOpenStatus } from '../lib/opening';
+
+interface Props {
+  variant?: 'light' | 'dark';
+  class?: string;
+}
+const { variant = 'light', class: className = '' } = Astro.props;
+const initial = getOpenStatus();
+const dark = variant === 'dark';
+---
+<span
+  class:list={[
+    'status-badge inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-sm font-medium',
+    dark ? 'border-white/15 bg-white/5 text-white' : 'border-hair bg-white text-ink-700',
+    className,
+  ]}
+  data-status-badge
+>
+  <span
+    class:list={['status-dot relative flex h-2 w-2', initial.isOpen ? 'is-open' : 'is-closed']}
+    aria-hidden="true"
+  >
+    <span class="status-ping absolute inline-flex h-full w-full rounded-full opacity-75"></span>
+    <span class="status-core relative inline-flex h-2 w-2 rounded-full"></span>
+  </span>
+  <span data-status-label>{initial.label}</span>
+</span>
+
+<style>
+  .status-dot.is-open .status-core { background: #16a34a; }
+  .status-dot.is-open .status-ping { background: #16a34a; animation: status-ping 1.8s cubic-bezier(0, 0, 0.2, 1) infinite; }
+  .status-dot.is-closed .status-core { background: #94a3b8; }
+  .status-dot.is-closed .status-ping { background: transparent; }
+  @keyframes status-ping { 75%, 100% { transform: scale(2.4); opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { .status-ping { animation: none !important; } }
+</style>
+
+<script>
+  import { getOpenStatus } from '../lib/opening';
+  function update() {
+    const status = getOpenStatus(new Date());
+    document.querySelectorAll('[data-status-badge]').forEach((badge) => {
+      const dot = badge.querySelector('.status-dot');
+      const label = badge.querySelector('[data-status-label]');
+      if (label) label.textContent = status.label;
+      if (dot) {
+        dot.classList.toggle('is-open', status.isOpen);
+        dot.classList.toggle('is-closed', !status.isOpen);
+      }
+    });
+  }
+  update();
+  setInterval(update, 60_000);
+</script>

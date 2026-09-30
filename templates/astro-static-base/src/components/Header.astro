@@ -1,0 +1,94 @@
+---
+import Icon from './Icon.astro';
+import StatusBadge from './StatusBadge.astro';
+import { company, contact } from '../content/site';
+
+const nav = [
+  { label: 'Leistungen', href: '/leistungen' },
+  { label: 'Kontakt', href: '/kontakt' },
+];
+const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
+---
+<header class="sticky top-0 z-50 border-b border-hair bg-white/85 backdrop-blur-md">
+  <div class="container-page flex h-16 items-center justify-between gap-4 md:h-[72px]">
+    <a href="/" class="group flex items-center gap-2.5">
+      <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-ink-900 text-white font-bold">
+        {company.shortName.charAt(0)}
+      </span>
+      <span class="leading-none">
+        <span class="block text-[15px] font-bold tracking-tight text-ink-900">{company.shortName}</span>
+        <span class="block font-mono text-[10px] uppercase tracking-[0.16em] text-ink-500">{company.region}</span>
+      </span>
+    </a>
+
+    <nav class="hidden items-center gap-1 lg:flex" aria-label="Hauptnavigation">
+      {nav.map((item) => (
+        <a
+          href={item.href}
+          class:list={[
+            'rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-ink-50',
+            pathname === item.href ? 'text-accent-600' : 'text-ink-700',
+          ]}
+        >
+          {item.label}
+        </a>
+      ))}
+    </nav>
+
+    <div class="flex items-center gap-2 md:gap-3">
+      <StatusBadge class="hidden md:inline-flex" />
+      <a href={contact.phone.link} class="hidden items-center gap-2 text-sm font-semibold text-ink-900 transition-colors hover:text-accent-600 md:flex">
+        <Icon name="phone" size={18} class="text-accent-600" />
+        {contact.phone.display}
+      </a>
+      <a href="/kontakt" class="btn btn-primary hidden text-sm sm:inline-flex">Kontakt</a>
+
+      <a href={contact.phone.link} class="btn btn-primary px-3 py-2.5 sm:hidden" aria-label="Jetzt anrufen">
+        <Icon name="phone" size={18} />
+      </a>
+      <button
+        type="button"
+        class="flex h-11 w-11 items-center justify-center rounded-lg border border-hair text-ink-900 lg:hidden"
+        aria-label="Menü öffnen"
+        aria-expanded="false"
+        data-menu-toggle
+      >
+        <Icon name="menu" size={22} />
+      </button>
+    </div>
+  </div>
+
+  <div class="hidden border-t border-hair bg-white lg:!hidden" data-mobile-menu hidden>
+    <nav class="container-page flex flex-col py-3" aria-label="Mobile Navigation">
+      {nav.map((item) => (
+        <a href={item.href} class="rounded-lg px-3 py-3 text-base font-medium text-ink-800 hover:bg-ink-50">
+          {item.label}
+        </a>
+      ))}
+      <a href="/kontakt" class="btn btn-primary mt-2">Kontakt</a>
+    </nav>
+  </div>
+</header>
+
+<script>
+  const toggle = document.querySelector('[data-menu-toggle]');
+  const menu = document.querySelector('[data-mobile-menu]');
+  toggle?.addEventListener('click', () => {
+    const open = menu?.hasAttribute('hidden');
+    if (open) {
+      menu?.removeAttribute('hidden');
+      menu?.classList.remove('hidden');
+    } else {
+      menu?.setAttribute('hidden', '');
+      menu?.classList.add('hidden');
+    }
+    toggle.setAttribute('aria-expanded', String(open));
+  });
+  menu?.querySelectorAll('a').forEach((a) =>
+    a.addEventListener('click', () => {
+      menu?.setAttribute('hidden', '');
+      menu?.classList.add('hidden');
+      toggle?.setAttribute('aria-expanded', 'false');
+    })
+  );
+</script>

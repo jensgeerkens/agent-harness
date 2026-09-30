@@ -1,0 +1,93 @@
+---
+import Icon from './Icon.astro';
+import { company, contact, openingHours, serviceArea } from '../content/site';
+
+const year = new Date().getFullYear();
+const waText = encodeURIComponent('Hallo, ich habe eine Anfrage.');
+const waLink = `https://wa.me/${contact.whatsapp.replace(/[^0-9]/g, '')}?text=${waText}`;
+---
+<footer class="mt-24 bg-ink-900 text-ink-300">
+  <div class="container-page grid gap-12 py-16 md:grid-cols-2 lg:grid-cols-4">
+    <div class="lg:col-span-1">
+      <div class="flex items-center gap-2.5 text-white">
+        <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-white/10 font-bold">
+          {company.shortName.charAt(0)}
+        </span>
+        <span class="leading-tight">
+          <span class="block font-bold tracking-tight">{company.shortName}</span>
+          <span class="block font-mono text-[10px] uppercase tracking-[0.16em] text-ink-400">{company.region}</span>
+        </span>
+      </div>
+      <p class="mt-4 text-sm leading-relaxed text-ink-400">{company.tagline}</p>
+    </div>
+
+    <div>
+      <h2 class="font-mono text-xs uppercase tracking-[0.16em] text-ink-400">Kontakt</h2>
+      <ul class="mt-4 space-y-3 text-sm">
+        <li class="flex items-start gap-2.5">
+          <Icon name="map-pin" size={18} class="mt-0.5 shrink-0 text-accent-400" />
+          <span>{contact.street}<br />{contact.zip} {contact.city}</span>
+        </li>
+        <li>
+          <a href={contact.phone.link} class="flex items-center gap-2.5 text-white transition-colors hover:text-accent-400">
+            <Icon name="phone" size={18} class="shrink-0 text-accent-400" />{contact.phone.display}
+          </a>
+        </li>
+        <li>
+          <a href={waLink} target="_blank" rel="noopener" class="flex items-center gap-2.5 transition-colors hover:text-white">
+            <Icon name="whatsapp" size={18} class="shrink-0 text-accent-400" />WhatsApp
+          </a>
+        </li>
+        <li>
+          <a href={`mailto:${contact.email.info}`} class="flex items-center gap-2.5 transition-colors hover:text-white">
+            <Icon name="mail" size={18} class="shrink-0 text-accent-400" />E-Mail schreiben
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <div>
+      <h2 class="font-mono text-xs uppercase tracking-[0.16em] text-ink-400">Öffnungszeiten</h2>
+      <ul class="mt-4 space-y-1.5 text-sm">
+        {openingHours.map((d) => (
+          <li class="flex justify-between gap-4">
+            <span class="text-ink-400">{d.day}</span>
+            <span class={d.open ? 'text-ink-200' : 'text-ink-400'}>
+              {d.open ? `${d.open}–${d.close}${d.pause ? ' · Pause ' + d.pause : ''}` : 'geschlossen'}
+            </span>
+          </li>
+        ))}
+      </ul>
+    </div>
+
+    <div>
+      <h2 class="font-mono text-xs uppercase tracking-[0.16em] text-ink-400">Seiten</h2>
+      <ul class="mt-4 space-y-2 text-sm">
+        <li><a href="/leistungen" class="transition-colors hover:text-white">Leistungen</a></li>
+        <li><a href="/kontakt" class="transition-colors hover:text-white">Kontakt</a></li>
+        <li><a href="/impressum" class="transition-colors hover:text-white">Impressum</a></li>
+        <li><a href="/datenschutz" class="transition-colors hover:text-white">Datenschutz</a></li>
+      </ul>
+      <p class="mt-5 text-xs leading-relaxed text-ink-400">
+        Für {serviceArea.cities.slice(0, 3).join(', ')} und Umgebung.
+      </p>
+    </div>
+  </div>
+
+  <div class="border-t border-white/10">
+    <div class="container-page flex flex-col items-start justify-between gap-2 py-6 text-xs text-ink-400 sm:flex-row sm:items-center">
+      <p>© {year} {company.legalName}. Alle Rechte vorbehalten.</p>
+    </div>
+  </div>
+</footer>
+
+<!-- Mobile Sticky-Aktionsleiste -->
+<div class="fixed inset-x-0 bottom-0 z-40 flex gap-2 border-t border-hair bg-white/95 p-2.5 backdrop-blur-md sm:hidden">
+  <a href={contact.phone.link} class="btn btn-ghost flex-1 text-sm">
+    <Icon name="phone" size={18} class="text-accent-600" /> Anrufen
+  </a>
+  <a href="/kontakt" class="btn btn-primary flex-1 text-sm">
+    <Icon name="calendar" size={18} /> Kontakt
+  </a>
+</div>
+<div class="h-[68px] sm:hidden" aria-hidden="true"></div>

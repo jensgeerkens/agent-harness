@@ -1,0 +1,10 @@
+{
+  // Cloudflare PAGES Direct-Upload-Referenz (kein Worker-Script).
+  // Deploy erfolgt über das /deploy-pages-Skill:
+  //   wrangler pages deploy ./dist --project-name=<name> --branch=main --commit-dirty=true
+  // Diese Datei dient nur der Doku; Pages braucht sie für Direct-Upload nicht zwingend.
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "astro-static-base",
+  "pages_build_output_dir": "./dist",
+  "compatibility_date": "2025-05-01"
+}

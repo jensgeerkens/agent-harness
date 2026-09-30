@@ -1,0 +1,29 @@
+{
+  "project": "beispiel-baeckerei",
+  "title": "Website-Fragebogen: Beispiel-Bäckerei",
+  "intro": "Ein paar Fragen zu Ihrem Betrieb. Das Ausfüllen dauert etwa zehn Minuten, Zwischenstände bleiben in diesem Browser gespeichert.",
+  "sections": [
+    {
+      "id": "betrieb",
+      "title": "Über Ihren Betrieb",
+      "questions": [
+        { "id": "name", "label": "Wie heißt Ihr Betrieb?", "type": "text", "required": true, "placeholder": "z. B. Musterbäckerei" },
+        { "id": "schwerpunkt", "label": "Was ist Ihr Schwerpunkt?", "type": "radio", "required": true,
+          "options": ["Brot und Brötchen", "Kuchen und Torten", "Café mit Sitzplätzen"] },
+        { "id": "kontakt", "label": "Unter welcher E-Mail-Adresse erreichen wir Sie?", "type": "email", "required": true, "note": false }
+      ]
+    },
+    {
+      "id": "website",
+      "title": "Ihre Website",
+      "help": "Mehrfachauswahl möglich.",
+      "questions": [
+        { "id": "ziele", "label": "Was soll die Website vor allem leisten?", "type": "checkbox",
+          "options": ["Öffnungszeiten und Anfahrt zeigen", "Vorbestellungen ermöglichen", "Sortiment vorstellen"] },
+        { "id": "stil", "label": "Welcher Stil passt zu Ihnen?", "type": "select",
+          "options": ["Bitte wählen", "Klassisch und warm", "Modern und reduziert", "Verspielt"] },
+        { "id": "sonstiges", "label": "Gibt es sonst noch etwas, das wir wissen sollten?", "type": "textarea" }
+      ]
+    }
+  ]
+}

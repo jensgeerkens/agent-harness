@@ -1,0 +1,52 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { company, contact, legal } from '../content/site';
+---
+<BaseLayout title="Impressum" description="Impressum gemäß § 5 DDG." path="impressum">
+  <section class="container-page py-16 md:py-20">
+    <h1 class="text-4xl font-bold tracking-tight text-ink-900">Impressum</h1>
+    <div class="prose mt-8 max-w-2xl space-y-6 text-ink-700">
+      <div>
+        <h2 class="text-lg font-semibold text-ink-900">Angaben gemäß § 5 DDG</h2>
+        <p class="mt-2">
+          {company.legalName}<br />
+          {contact.street}<br />
+          {contact.zip} {contact.city}
+        </p>
+      </div>
+      <div>
+        <h2 class="text-lg font-semibold text-ink-900">Vertreten durch</h2>
+        <p class="mt-2">{legal.responsible}</p>
+      </div>
+      <div>
+        <h2 class="text-lg font-semibold text-ink-900">Kontakt</h2>
+        <p class="mt-2">
+          Telefon: <a href={contact.phone.link} class="text-accent-600 hover:text-accent-700">{contact.phone.display}</a><br />
+          E-Mail: <a href={`mailto:${contact.email.main}`} class="text-accent-600 hover:text-accent-700">{contact.email.main}</a>
+        </p>
+      </div>
+      {legal.vatId && (
+        <div>
+          <h2 class="text-lg font-semibold text-ink-900">Umsatzsteuer-ID</h2>
+          <p class="mt-2">{legal.vatId}</p>
+        </div>
+      )}
+      {legal.supervisoryAuthority && (
+        <div>
+          <h2 class="text-lg font-semibold text-ink-900">Aufsichtsbehörde / Kammer</h2>
+          <p class="mt-2">{legal.supervisoryAuthority}</p>
+        </div>
+      )}
+      <div>
+        <h2 class="text-lg font-semibold text-ink-900">Verbraucherstreitbeilegung</h2>
+        <p class="mt-2">
+          Wir sind nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer
+          Verbraucherschlichtungsstelle teilzunehmen.
+        </p>
+      </div>
+      <p class="text-sm text-ink-500">
+        Hinweis: Pflichtangaben vor Veröffentlichung durch Inhaber:in/Anwält:in prüfen lassen.
+      </p>
+    </div>
+  </section>
+</BaseLayout>
